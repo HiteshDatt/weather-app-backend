@@ -1,26 +1,20 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
 const auth = require("./routes/auth");
+const user_management = require("./routes/user_management");
+const weather_analytics = require("./routes/weather_analytics");
+const authMiddleware = require("./middlewares/auth_middleware");
+app.use(express.json())
 
+// Public routes
 app.use("/auth", auth);
 
-// one file will contain all the routes starting with "/analytics" and middleware wont allow this file routes to if requested user is not admin, like  /analytics/wheather
+app.use(authMiddleware);
 
-// another file with all routes starting with "/management" like /management/user
-
-// private Route
-app.get('/private', (req, res) => {
-    // Verify JWT token
-    try {
-        const token = req.headers.authorization.split(' ')[1];
-        const user = jwt.verify(token, JWT_SECRET);
-        res.send({ message: `Welcome, ${user.name}! This is a private area.` });
-    } catch {
-        res.send({ message: `NOT ALLOWED! This is a private area.` });
-    }
-});
+// Private Routes
+app.use('/user_management', user_management);
+app.use('/weather_analytics', weather_analytics);
 
 
 app.listen(3000, () => {
