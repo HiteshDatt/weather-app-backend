@@ -8,7 +8,7 @@ const users = require('../models/users');
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const JWT_SECRET = process.env.JWT_SECRET;
-const GOOGLE_REDIRECT_URI = "http://localhost:3000/auth/google/callback";
+const GOOGLE_REDIRECT_URI = `${process.env.SERVER_BASE_URI}/auth/google/callback`;
 
 const client = new OAuth2Client({
     clientId: GOOGLE_CLIENT_ID,
@@ -57,13 +57,15 @@ router.get('/google/callback', async (req, res) => {
         googleId: payload.sub,
         name: payload.name,
         email: payload.email,
-        role: userRole
+        role: userRole,
+        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // 7 days
     };
 
     // User authenticated without password from the code above (trusting google for that)
     const token = jwt.sign(user, JWT_SECRET);
 
-    res.send({ token });
+    const redirectUri = `${process.env.CLIENT_BASE_URI}/logging-in-with-google?token=${token}`
+    res.redirect(redirectUri);
 });
 
 

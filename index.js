@@ -17,6 +17,6 @@ app.use('/user_management', user_management);
 app.use('/weather_analytics', weather_analytics);
 
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.listen(9000, () => {
+    console.log('Server is running on port 9000');
 });
