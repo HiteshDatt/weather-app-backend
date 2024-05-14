@@ -64,6 +64,8 @@ router.get('/google/callback', async (req, res) => {
     // User authenticated without password from the code above (trusting google for that)
     const token = jwt.sign(user, JWT_SECRET);
 
+    //TODO: Implement a refresh token so that access token expiry can be set to a smaller value for better security
+
     const redirectUri = `${process.env.CLIENT_BASE_URI}/logging-in-with-google?token=${token}`
     res.redirect(redirectUri);
 });
